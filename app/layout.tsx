@@ -8,7 +8,7 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'My Portfolio | Developer & Creator',
+  title: 'Mehmet İlyas İNCE',
   description: 'A portfolio showcasing my projects, writing, and daily thoughts on development and creative work.',
   generator: 'v0.app',
   icons: {
