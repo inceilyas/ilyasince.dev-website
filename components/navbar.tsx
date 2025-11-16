@@ -139,7 +139,7 @@ export default function Navbar() {
           {/* Download CV Button */}
           <a
             href="/resume.pdf"
-            download="Mehmet_İlyas_İnce_Resume.pdf"
+            download="Mehmet_Ilyas_Ince_Resume.pdf"
             className={`px-6 py-2 rounded-lg bg-primary text-primary-foreground font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300 flex items-center gap-2 ${
               isVisible ? 'fly-in-right opacity-100' : 'opacity-0'
             }`}
