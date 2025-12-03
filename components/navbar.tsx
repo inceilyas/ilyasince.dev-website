@@ -54,17 +54,12 @@ export default function Navbar() {
           : 'bg-transparent'
       }`}
     >
-      {/* 
-        MOBİL SCROLL ÇÖZÜMÜ:
-        - justify-between kaldırıldı
-        - gap eklendi
-        - overflow-x-auto + whitespace-nowrap eklendi
-      */}
       <div
         className="
           max-w-7xl mx-auto px-6 lg:px-8 py-4
           flex items-center gap-4
           overflow-x-auto whitespace-nowrap
+          justify-start lg:justify-between
         "
       >
         {/* Logo */}
@@ -106,11 +101,11 @@ export default function Navbar() {
           })}
         </div>
 
-        {/* Theme Toggle + Language Toggle + CV Button */}
+        {/* Theme Toggle + Language Toggle + Resume Button */}
         <div className="flex items-center gap-2 whitespace-nowrap">
           {/* Language Toggle */}
           {langMounted && (
-            <div className="flex items-center bg-secondary/50 rounded-lg p-1">
+            <div className="flex items-center bg-secondary/50 rounded-lg p-1 whitespace-nowrap">
               <button
                 onClick={() => setLanguage('en')}
                 className={`px-3 py-1.5 rounded font-medium text-sm transition-all duration-300 ${
@@ -144,15 +139,11 @@ export default function Navbar() {
               style={{ transitionDelay: isVisible ? '0.25s' : '0s' }}
               aria-label="Toggle theme"
             >
-              {theme === 'light' ? (
-                <Moon className="w-5 h-5" />
-              ) : (
-                <Sun className="w-5 h-5" />
-              )}
+              {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
             </button>
           )}
 
-          {/* Download CV Button */}
+          {/* Resume Button */}
           <a
             href="/Mehmet_Ilyas_Ince_Resume.pdf"
             download="Mehmet_Ilyas_Ince_Resume.pdf"
