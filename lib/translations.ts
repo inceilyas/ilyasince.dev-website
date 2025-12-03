@@ -10,14 +10,14 @@ export const translations = {
 
     // Hero Section
     heroTitle: 'Hi, I\'m Mehmet İlyas İnce',
-    heroSubtitle: 'Computer Engineering student at Istanbul Technical University passionate about AI, model training, and building intelligent automation workflows with Hugging Face and n8n.',
+    heroSubtitle: 'Computer Engineering student at Istanbul Technical University passionate about AI, model training, and building intelligent automation workflows with Hugging Face and LangChain.',
     viewMyWork: 'View My Work',
     getInTouch: 'Get in Touch',
 
     // About Section
     aboutTitle: 'About Me',
     aboutText1: 'I\'m a motivated Computer Engineering student at Istanbul Technical University with a strong passion for Artificial Intelligence. With hands-on experience in model training and a focus on advancing my skills in the AI ecosystem, I\'m particularly interested in mastering Hugging Face for advanced NLP solutions.',
-    aboutText2: 'Currently, I\'m actively working on building and automating AI-powered workflows using n8n. I\'m eager to apply these emerging skills in a challenging, growth-oriented role where I can contribute meaningfully to innovative AI projects.',
+    aboutText2: 'Currently, I\'m actively working on building and automating AI-powered workflows using langchain. I\'m eager to apply these emerging skills in a challenging, growth-oriented role where I can contribute meaningfully to innovative AI projects.',
     learnMore: 'Learn More →',
 
     // Experience Section
@@ -120,14 +120,14 @@ export const translations = {
 
     // Hero Section
     heroTitle: 'Merhaba, ben Mehmet İlyas İnce',
-    heroSubtitle: 'İstanbul Teknik Üniversitesi\'nde Bilgisayar Mühendisliği öğrencisi, Yapay Zeka, model eğitimi ve Hugging Face ile n8n kullanarak akıllı otomasyon iş akışları oluşturmaya tutkulu.',
+    heroSubtitle: 'İstanbul Teknik Üniversitesi\'nde Bilgisayar Mühendisliği öğrencisi, Yapay Zeka, model eğitimi ve Hugging Face ile LangChain kullanarak akıllı otomasyon iş akışları oluşturmaya tutkulu.',
     viewMyWork: 'Çalışmalarımı Görüntüle',
     getInTouch: 'İletişime Geç',
 
     // About Section
     aboutTitle: 'Hakkımda',
     aboutText1: 'İstanbul Teknik Üniversitesi\'nde Bilgisayar Mühendisliği okuyan, Yapay Zeka alanında tutkulu, model eğitimi konusunda pratik tecrübesi olan ve YZ ekosistemindeki becerilerini geliştirmeye odaklanan motive bir öğrenciyim. Özellikle, ileri NLP çözümleri için Hugging Face mastery\'e ilgi duyorum.',
-    aboutText2: 'Şu anda, n8n kullanarak YZ destekli iş akışları oluşturmak ve otomatikleştirmek üzerinde aktif olarak çalışıyorum. Bu yeni becerilerimi zorlayıcı, büyüme yönelimli bir rolde uygulamaya, yenilikçi YZ projelerine anlamlı katkı sağlamaya istekliyim.',
+    aboutText2: 'Şu anda, LangChain kullanarak YZ destekli iş akışları oluşturmak ve otomatikleştirmek üzerinde aktif olarak çalışıyorum. Bu yeni becerilerimi zorlayıcı, büyüme yönelimli bir rolde uygulamaya, yenilikçi YZ projelerine anlamlı katkı sağlamaya istekliyim.',
     learnMore: 'Daha Fazla Bilgi →',
 
     // Experience Section
