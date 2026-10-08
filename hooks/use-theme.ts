@@ -2,34 +2,23 @@
 
 import { useEffect, useState } from 'react'
 
+// The initial theme is applied before paint by the inline script in app/layout.tsx.
 export function useTheme() {
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     setMounted(true)
-    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    
-    const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light')
-    setTheme(initialTheme)
-    applyTheme(initialTheme)
+    setTheme(document.documentElement.classList.contains('dark') ? 'dark' : 'light')
   }, [])
 
-  const applyTheme = (newTheme: 'light' | 'dark') => {
-    const html = document.documentElement
-    if (newTheme === 'dark') {
-      html.classList.add('dark')
-    } else {
-      html.classList.remove('dark')
-    }
-  }
-
   const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light'
-    setTheme(newTheme)
-    localStorage.setItem('theme', newTheme)
-    applyTheme(newTheme)
+    const next = theme === 'light' ? 'dark' : 'light'
+    setTheme(next)
+    document.documentElement.classList.toggle('dark', next === 'dark')
+    try {
+      localStorage.setItem('theme', next)
+    } catch {}
   }
 
   return { theme, toggleTheme, mounted }

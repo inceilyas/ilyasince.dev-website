@@ -1,162 +1,146 @@
 'use client'
 
-import Link from 'next/link'
-import { useState, useEffect } from 'react'
-import { Download, Moon, Sun } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Menu, Moon, Sun, X } from 'lucide-react'
 import { useTheme } from '@/hooks/use-theme'
-import { useScrollObserver } from '@/components/scroll-observer'
 import { useLanguage } from '@/hooks/use-language'
+import { Logo } from '@/components/logo'
+import type { Language } from '@/lib/content'
+
+const SECTION_IDS = ['agents', 'how', 'features', 'compare', 'roadmap'] as const
 
 export default function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false)
-  const [isVisible, setIsVisible] = useState(false)
   const { theme, toggleTheme, mounted } = useTheme()
-  const { language, setLanguage, t, mounted: langMounted } = useLanguage()
-  const activeSection = useScrollObserver()
+  const { c, language, setLanguage } = useLanguage()
+  const [scrolled, setScrolled] = useState(false)
+  const [open, setOpen] = useState(false)
+  const [active, setActive] = useState<string | null>(null)
 
   useEffect(() => {
-    setIsVisible(true)
-
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
-    }
-
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
+    const onScroll = () => setScrolled(window.scrollY > 8)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  const navItems = [
-    { href: '/#', label: t('home'), id: 'home' },
-    { href: '/#about', label: t('about'), id: 'about' },
-    { href: '/#projects', label: t('projects'), id: 'projects' },
-    { href: '/#skills', label: t('skills'), id: 'skills' },
-    { href: '/#contact', label: t('contact'), id: 'contact' },
-  ]
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) setActive(e.target.id)
+        })
+      },
+      { rootMargin: '-45% 0px -50% 0px' },
+    )
+    SECTION_IDS.forEach((id) => {
+      const el = document.getElementById(id)
+      if (el) observer.observe(el)
+    })
+    return () => observer.disconnect()
+  }, [])
 
-  const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    const targetId = href.replace('/#', '')
-    if (targetId === '') {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    } else {
-      const element = document.getElementById(targetId)
-      if (element) {
-        e.preventDefault()
-        element.scrollIntoView({ behavior: 'smooth' })
-      }
-    }
-  }
+  const links = SECTION_IDS.map((id) => ({ id, label: c.nav[id] }))
 
-  return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled
-          ? 'bg-background/95 dark:bg-background/95 backdrop-blur-lg border-b border-border/50'
-          : 'bg-transparent'
-      }`}
-    >
-      <div
-        className="
-          max-w-7xl mx-auto px-6 lg:px-8 py-4
-          flex items-center gap-4
-          overflow-x-auto whitespace-nowrap
-          justify-start lg:justify-between
-        "
-      >
-        {/* Logo */}
-        <Link
-          href="/"
-          className={`text-xl font-semibold tracking-wide text-foreground dark:text-foreground hover:text-primary dark:hover:text-accent transition-colors duration-300 ${
-            isVisible ? 'fly-in-left opacity-100' : 'opacity-0'
+  const LangSwitch = (
+    <div className="flex items-center rounded-md border border-border p-0.5 text-sm" role="group" aria-label={c.nav.language}>
+      {(['en', 'tr'] as Language[]).map((lang) => (
+        <button
+          key={lang}
+          type="button"
+          onClick={() => setLanguage(lang)}
+          aria-pressed={language === lang}
+          className={`rounded-[5px] px-2 py-1 font-medium transition-colors ${
+            language === lang ? 'bg-foreground text-background' : 'text-muted-foreground hover:text-foreground'
           }`}
         >
-          ilyasince.dev
-        </Link>
+          {lang.toUpperCase()}
+        </button>
+      ))}
+    </div>
+  )
 
-        {/* Navigation Links */}
-        <div className="flex items-center gap-1 lg:gap-2 whitespace-nowrap">
-          {navItems.map((item, index) => {
-            const isActive = activeSection === item.id
-            return (
+  return (
+    <header
+      className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
+        scrolled || open ? 'border-b border-border bg-background/90 backdrop-blur-md' : 'border-b border-transparent'
+      }`}
+    >
+      <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+        <a href="#top" className="shrink-0 rounded-md" aria-label="GDI" onClick={() => setOpen(false)}>
+          <Logo />
+        </a>
+
+        <ul className="hidden items-center gap-1 lg:flex">
+          {links.map((l) => (
+            <li key={l.id}>
               <a
-                key={item.href}
-                href={item.href}
-                onClick={(e) => handleSmoothScroll(e, item.href)}
-                className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 relative overflow-hidden group ${
-                  isActive
-                    ? 'bg-primary/10 text-primary dark:text-accent'
-                    : 'text-foreground hover:text-primary dark:hover:text-accent'
-                } ${isVisible ? 'fly-in-right opacity-100' : 'opacity-0'}`}
-                style={{
-                  transitionDelay: isVisible ? `${0.05 + index * 0.05}s` : '0s',
-                }}
+                href={`#${l.id}`}
+                className={`rounded-md px-3 py-2 text-[0.95rem] transition-colors ${
+                  active === l.id ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
+                }`}
+                aria-current={active === l.id ? 'true' : undefined}
               >
-                <span className="relative z-10">{item.label}</span>
-                {isActive ? (
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-primary to-accent" />
-                ) : (
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-primary to-accent w-0 group-hover:w-full transition-all duration-300" />
-                )}
+                {l.label}
               </a>
-            )
-          })}
-        </div>
+            </li>
+          ))}
+        </ul>
 
-        {/* Theme Toggle + Language Toggle + Resume Button */}
-        <div className="flex items-center gap-2 whitespace-nowrap">
-          {/* Language Toggle */}
-          {langMounted && (
-            <div className="flex items-center bg-secondary/50 rounded-lg p-1 whitespace-nowrap">
-              <button
-                onClick={() => setLanguage('en')}
-                className={`px-3 py-1.5 rounded font-medium text-sm transition-all duration-300 ${
-                  language === 'en'
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-foreground hover:text-primary dark:hover:text-accent'
-                }`}
-              >
-                EN
-              </button>
-              <button
-                onClick={() => setLanguage('tr')}
-                className={`px-3 py-1.5 rounded font-medium text-sm transition-all duration-300 ${
-                  language === 'tr'
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-foreground hover:text-primary dark:hover:text-accent'
-                }`}
-              >
-                TR
-              </button>
-            </div>
-          )}
-
-          {/* Theme Toggle */}
-          {mounted && (
-            <button
-              onClick={toggleTheme}
-              className={`p-2 rounded-lg bg-secondary/50 hover:bg-secondary text-foreground transition-all duration-300 hover:scale-110 ${
-                isVisible ? 'fly-in-right opacity-100' : 'opacity-0'
-              }`}
-              style={{ transitionDelay: isVisible ? '0.25s' : '0s' }}
-              aria-label="Toggle theme"
-            >
-              {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
-            </button>
-          )}
-
-          {/* Resume Button */}
-          <a
-            href="/Mehmet_Ilyas_Ince_Resume.pdf"
-            download="Mehmet_Ilyas_Ince_Resume.pdf"
-            className={`px-6 py-2 rounded-lg bg-primary text-primary-foreground font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300 flex items-center gap-2 ${
-              isVisible ? 'fly-in-right opacity-100' : 'opacity-0'
-            }`}
-            style={{ transitionDelay: isVisible ? '0.3s' : '0s' }}
+        <div className="flex items-center gap-2">
+          {LangSwitch}
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="grid h-9 w-9 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+            aria-label={c.nav.toggleTheme}
           >
-            <Download className="w-4 h-4" />
-            <span className="hidden sm:inline">{t('resume')}</span>
+            {mounted && theme === 'dark' ? <Sun className="h-[18px] w-[18px]" /> : <Moon className="h-[18px] w-[18px]" />}
+          </button>
+          <a
+            href="#contact"
+            className="hidden rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 sm:inline-block"
+          >
+            {c.nav.cta}
           </a>
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            className="grid h-9 w-9 place-items-center rounded-md text-foreground hover:bg-secondary lg:hidden"
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+            aria-label="Menu"
+          >
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </div>
-      </div>
-    </nav>
+      </nav>
+
+      {open && (
+        <div id="mobile-menu" className="border-t border-border px-4 pb-5 pt-2 sm:px-6 lg:hidden">
+          <ul className="flex flex-col">
+            {links.map((l) => (
+              <li key={l.id}>
+                <a
+                  href={`#${l.id}`}
+                  onClick={() => setOpen(false)}
+                  className="block rounded-md px-2 py-3 text-base text-foreground hover:bg-secondary"
+                >
+                  {l.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-3 flex items-center justify-end">
+            <a
+              href="#contact"
+              onClick={() => setOpen(false)}
+              className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
+            >
+              {c.nav.cta}
+            </a>
+          </div>
+        </div>
+      )}
+    </header>
   )
 }

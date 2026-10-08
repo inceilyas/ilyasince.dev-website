@@ -1,525 +1,410 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import { Check } from 'lucide-react'
 import Navbar from '@/components/navbar'
-import { ScrollAnimation } from '@/components/scroll-animations'
-import { ArrowRight, Github, Linkedin, Mail, ExternalLink, Phone, Loader2, Check } from 'lucide-react'
+import HeroDemo from '@/components/hero-demo'
+import { LogoMark } from '@/components/logo'
 import { useLanguage } from '@/hooks/use-language'
+import { site, type AgentKey, type Audience } from '@/lib/content'
+
+const container = 'mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8'
+const h2 = 'text-[2rem] font-bold leading-[1.08] tracking-[-0.025em] text-balance sm:text-[2.6rem]'
+const lead = 'mt-4 max-w-[62ch] text-lg leading-relaxed text-muted-foreground'
+
+const agentTone: Record<AgentKey, { bar: string; soft: string; text: string }> = {
+  scientist: { bar: 'bg-scientist', soft: 'bg-scientist-soft', text: 'text-scientist' },
+  analysis: { bar: 'bg-analysis', soft: 'bg-analysis-soft', text: 'text-analysis' },
+  engineer: { bar: 'bg-engineer', soft: 'bg-engineer-soft', text: 'text-engineer' },
+}
+
+const audienceTone: Record<Audience, string> = {
+  business: 'border-primary/30 text-primary',
+  admin: 'border-analysis/40 text-analysis',
+  both: 'border-border text-muted-foreground',
+}
 
 export default function Home() {
-  const [isVisible, setIsVisible] = useState(false)
-  const { t, mounted } = useLanguage()
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' })
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
-
-  useEffect(() => {
-    setIsVisible(true)
-  }, [])
-
-  if (!mounted) return null
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { id, value } = e.target
-    setFormData(prev => ({ ...prev, [id]: value }))
-  }
-
-  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    
-    if (!formData.name || !formData.email || !formData.message) {
-      setSubmitStatus('error')
-      setTimeout(() => setSubmitStatus('idle'), 3000)
-      return
-    }
-
-    setIsSubmitting(true)
-    
-    // Create mailto link with form data
-    const mailtoLink = `mailto:mehmetilyasince1@gmail.com?subject=Portfolio Contact from ${encodeURIComponent(formData.name)}&body=${encodeURIComponent(
-      `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
-    )}`
-    
-    // Open email client
-    window.location.href = mailtoLink
-    
-    // Show success message
-    setSubmitStatus('success')
-    setFormData({ name: '', email: '', message: '' })
-    
-    setTimeout(() => {
-      setIsSubmitting(false)
-      setSubmitStatus('idle')
-    }, 2000)
-  }
+  const { c } = useLanguage()
 
   return (
-    <div className="min-h-screen bg-background text-foreground dark:bg-background dark:text-foreground">
+    <div id="top" className="min-h-screen overflow-x-clip">
       <Navbar />
-      
-      <main className="pt-20">
-        {/* Hero Section */}
-        <section className="px-6 lg:px-8 py-24 md:py-32 lg:py-40 max-w-7xl mx-auto">
-          <div className="space-y-8 md:space-y-10">
-            <div className="space-y-6 md:space-y-8">
-              <h1 className={`text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1] text-balance transition-all duration-1000 ${
-                isVisible ? 'fly-in-left opacity-100' : 'opacity-0'
-              }`}>
-                {t('heroTitle')}
-              </h1>
-              <p className={`text-lg md:text-xl lg:text-2xl text-muted-foreground leading-relaxed max-w-2xl font-light transition-all duration-1000 delay-100 ${
-                isVisible ? 'fly-in-right opacity-100' : 'opacity-0'
-              }`}>
-                {t('heroSubtitle')}
-              </p>
-            </div>
 
-            <div className={`flex gap-4 flex-wrap transition-all duration-1000 delay-200 ${
-              isVisible ? 'slide-up opacity-100' : 'opacity-0 translate-y-10'
-            }`}>
-              <a href="#projects" className="group px-8 py-4 bg-primary text-primary-foreground rounded-lg font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300 flex items-center gap-2">
-                {t('viewMyWork')}
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
+      <main>
+        {/* Hero */}
+        <section className={`${container} grid items-center gap-12 pb-20 pt-28 sm:pt-32 lg:grid-cols-[1fr_1.05fr] lg:gap-14 lg:pb-28 lg:pt-36`}>
+          <div>
+            <p className="mb-6 text-[0.95rem] font-medium text-muted-foreground">{site.fullName}</p>
+            <h1 className="max-w-[14ch] text-[2.85rem] font-bold leading-[1.02] tracking-[-0.035em] text-balance sm:text-6xl lg:text-[4.1rem]">
+              {c.hero.title}
+            </h1>
+            <p className="mt-6 max-w-[52ch] text-lg leading-relaxed text-muted-foreground sm:text-xl">{c.hero.lead}</p>
+            <div className="mt-9 flex flex-wrap gap-3">
+              <a
+                href="#contact"
+                className="rounded-md bg-primary px-5 py-3 font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+              >
+                {c.hero.primary}
               </a>
-              <a href="#contact" className="group px-8 py-4 bg-secondary text-secondary-foreground rounded-lg font-semibold hover:bg-secondary/80 hover:scale-105 transition-all duration-300 dark:bg-secondary/30 dark:hover:bg-secondary/50">
-                {t('getInTouch')}
+              <a
+                href="#how"
+                className="rounded-md border border-input px-5 py-3 font-semibold text-foreground transition-colors hover:bg-secondary"
+              >
+                {c.hero.secondary}
               </a>
             </div>
+            <p className="mt-6 text-sm text-muted-foreground">{c.hero.note}</p>
           </div>
+          <HeroDemo />
         </section>
 
-        {/* About Section */}
-        <section id="about" className="px-6 lg:px-8 py-20 md:py-28 bg-secondary/20 dark:bg-secondary/10">
-          <div className="max-w-7xl mx-auto">
-            <div className="grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
-              {/* About Content */}
-              <ScrollAnimation animation="slide-up">
-                <div className="space-y-6 md:space-y-8">
-                  <h2 className="text-4xl md:text-5xl font-bold">{t('aboutTitle')}</h2>
-                  <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-                    {t('aboutText1')}
-                  </p>
-                  <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-                    {t('aboutText2')}
-                  </p>
-                  <div className="flex gap-4 pt-4">
-                    <a href="#projects" className="text-primary hover:text-accent dark:hover:text-accent/80 transition-colors duration-300 font-semibold">{t('learnMore')}</a>
-                  </div>
-                </div>
-              </ScrollAnimation>
-
-              {/* About Image */}
-              <ScrollAnimation animation="scale" delay={0.2}>
-                <div className="flex items-center justify-center">
-                  <img 
-                    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/ilyas-HfHrRvRQRdkoiPCX5EYvhkGGE6qNMn.jpeg" 
-                    alt="Mehmet İlyas İnce" 
-                    className="rounded-2xl w-full max-w-sm aspect-square object-contain object-center shadow-lg hover:shadow-2xl transition-shadow duration-300"
-                  />
-                </div>
-              </ScrollAnimation>
+        {/* Statement + problem/solution */}
+        <section className="border-t border-border">
+          <div className={`${container} py-20 md:py-28`}>
+            <p className="max-w-[30ch] text-[1.75rem] font-semibold leading-[1.18] tracking-[-0.02em] text-balance sm:text-[2.35rem]">
+              {c.problem.statement}
+            </p>
+            <div className="mt-14 grid gap-10 md:grid-cols-2 md:gap-16">
+              <div>
+                <h2 className="text-lg font-semibold">{c.problem.problemTitle}</h2>
+                <p className="mt-3 max-w-[56ch] text-[1.05rem] leading-relaxed text-muted-foreground">{c.problem.problem}</p>
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold">{c.problem.solutionTitle}</h2>
+                <p className="mt-3 max-w-[56ch] text-[1.05rem] leading-relaxed text-muted-foreground">{c.problem.solution}</p>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Experience Section */}
-        <section id="experience" className="px-6 lg:px-8 py-20 md:py-28">
-          <div className="max-w-7xl mx-auto">
-            <ScrollAnimation className="mb-12">
-              <h2 className="text-4xl md:text-5xl font-bold mb-4">{t('experienceTitle')}</h2>
-            </ScrollAnimation>
+        {/* Agents: three stacked layers */}
+        <section id="agents" className="border-t border-border bg-card">
+          <div className={`${container} py-20 md:py-28`}>
+            <h2 className={h2}>{c.agents.title}</h2>
+            <p className={lead}>{c.agents.lead}</p>
 
-            <div className="grid md:grid-cols-2 gap-8">
-              {/* Fetalist AI Intern */}
-              <ScrollAnimation animation="slide-up" delay={0}>
-                <div className="p-8 md:p-10 rounded-2xl border border-border dark:border-border/50 bg-card dark:bg-card/50 hover:bg-card/80 dark:hover:bg-card/70 transition-all duration-500">
-                  <div className="mb-6">
-                    <h3 className="text-2xl font-bold text-primary dark:text-accent mb-1">{t('experienceAITitle')}</h3>
-                    <p className="text-lg font-semibold text-foreground mb-1">{t('experienceAICompany')}</p>
-                    <p className="text-sm text-muted-foreground">{t('experienceAIPeriod')}</p>
-                  </div>
-                  <ul className="space-y-3">
-                    <li className="flex gap-3 text-muted-foreground">
-                      <span className="text-primary dark:text-accent font-bold mt-1">•</span>
-                      <span>{t('experienceAI1')}</span>
-                    </li>
-                    <li className="flex gap-3 text-muted-foreground">
-                      <span className="text-primary dark:text-accent font-bold mt-1">•</span>
-                      <span>{t('experienceAI2')}</span>
-                    </li>
-                    <li className="flex gap-3 text-muted-foreground">
-                      <span className="text-primary dark:text-accent font-bold mt-1">•</span>
-                      <span>{t('experienceAI3')}</span>
-                    </li>
-                  </ul>
-                </div>
-              </ScrollAnimation>
-
-              {/* EtkinLink Database Developer */}
-              <ScrollAnimation animation="slide-up" delay={0.1}>
-                <div className="p-8 md:p-10 rounded-2xl border border-border dark:border-border/50 bg-card dark:bg-card/50 hover:bg-card/80 dark:hover:bg-card/70 transition-all duration-500">
-                  <div className="mb-6">
-                    <h3 className="text-2xl font-bold text-primary dark:text-accent mb-1">{t('experienceDBTitle')}</h3>
-                    <p className="text-lg font-semibold text-foreground mb-1">{t('experienceDBCompany')}</p>
-                    <p className="text-sm text-muted-foreground">{t('experienceDBPeriod')}</p>
-                  </div>
-                  <ul className="space-y-3">
-                    <li className="flex gap-3 text-muted-foreground">
-                      <span className="text-primary dark:text-accent font-bold mt-1">•</span>
-                      <span>{t('experienceDB1')}</span>
-                    </li>
-                    <li className="flex gap-3 text-muted-foreground">
-                      <span className="text-primary dark:text-accent font-bold mt-1">•</span>
-                      <span>{t('experienceDB2')}</span>
-                    </li>
-                  </ul>
-                </div>
-              </ScrollAnimation>
-            </div>
-          </div>
-        </section>
-
-        {/* Projects Section */}
-        <section id="projects" className="px-6 lg:px-8 py-20 md:py-28 bg-secondary/20 dark:bg-secondary/10">
-          <div className="max-w-7xl mx-auto">
-            <ScrollAnimation className="mb-12">
-              <h2 className="text-4xl md:text-5xl font-bold mb-4">{t('projectsTitle')}</h2>
-              <p className="text-lg text-muted-foreground">{t('projectsSubtitle')}</p>
-            </ScrollAnimation>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {[
-                {
-                  title: t('project1Title'),
-                  description: t('project1Desc'),
-                  tags: [t('python'), t('scikitlearn'), t('pandas'), t('matplotlib'), t('tensorflow')],
-                  githubUrl: 'https://github.com/inceilyas/ai-100-days',
-                },
-                {
-                  title: t('project2Title'),
-                  description: t('project2Desc'),
-                  tags: [t('python')],
-                  githubUrl: 'https://github.com/inceilyas/Piecewise-Interpolation-for-Robot-Path-Planning',
-                },
-                {
-                  title: t('project3Title'),
-                  description: t('project3Desc'),
-                  tags: [t('cpp')],
-                  githubUrl: 'https://github.com/inceilyas/round-robin-scheduler',
-                },
-                {
-                  title: t('project4Title'),
-                  description: t('project4Desc'),
-                  tags: [t('verilog')],
-                  githubUrl: 'https://github.com/inceilyas/ALU-System',
-                },
-                {
-                  title: t('project5Title'),
-                  description: t('project5Desc'),
-                  tags: [t('c')],
-                  githubUrl: 'https://github.com/inceilyas/mini-file-system',
-                },
-                {
-                  title: t('project6Title'),
-                  description: t('project6Desc'),
-                  tags: [t('c')],
-                  githubUrl: 'https://github.com/inceilyas/market-concurreny-system',
-                },
-              ].map((project, index) => (
-                <ScrollAnimation
-                  key={index}
-                  animation="slide-up"
-                  delay={index * 0.1}
-                >
-                  <div className="group relative p-8 md:p-10 rounded-2xl border border-border hover:border-primary/50 dark:border-border/50 dark:hover:border-primary/30 bg-card hover:bg-card/80 dark:bg-card/50 dark:hover:bg-card/70 transition-all duration-500 hover:scale-105 hover:shadow-2xl">
-                    <h3 className="text-2xl font-bold mb-2 group-hover:text-primary dark:group-hover:text-accent transition-colors duration-300">
-                      {project.title}
-                    </h3>
-                    <p className="text-muted-foreground mb-6">{project.description}</p>
-                    <div className="flex flex-wrap gap-2 mb-6">
-                      {project.tags.map(tag => (
-                        <span key={tag} className="px-3 py-1 text-xs font-medium bg-primary/8 dark:bg-primary/10 text-primary dark:text-accent rounded-full border border-primary/20 dark:border-primary/30 group-hover:bg-primary/12 transition-all duration-300">
-                          {tag}
-                        </span>
-                      ))}
+            <ol className="mt-12 space-y-3">
+              {c.agents.items.map((a, i) => {
+                const tone = agentTone[a.key]
+                return (
+                  <li
+                    key={a.key}
+                    className={`relative grid gap-4 overflow-hidden rounded-lg ${tone.soft} py-6 pl-7 pr-6 md:grid-cols-[minmax(0,17rem)_1fr] md:gap-10 md:py-7 md:pl-9`}
+                  >
+                    <span className={`absolute inset-y-0 left-0 w-1.5 ${tone.bar}`} aria-hidden />
+                    <div>
+                      <p className="text-sm text-muted-foreground">
+                        {i + 1} / 3
+                      </p>
+                      <h3 className={`mt-1 text-xl font-bold tracking-tight ${tone.text}`}>{a.name}</h3>
+                      <p className="mt-1 font-medium">{a.role}</p>
                     </div>
-                    <a 
-                      href={project.githubUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-primary dark:text-accent hover:text-primary-foreground dark:hover:text-primary-foreground bg-primary/10 dark:bg-primary/15 hover:bg-primary dark:hover:bg-accent rounded-lg transition-all duration-300 group-hover:gap-3"
-                    >
-                      <Github className="w-4 h-4" />
-                      {t('viewProject')}
-                    </a>
-                    <div className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-primary to-accent w-0 group-hover:w-full transition-all duration-700" />
-                  </div>
-                </ScrollAnimation>
+                    <ul className="space-y-2 self-center">
+                      {a.points.map((p) => (
+                        <li key={p} className="flex gap-3 leading-relaxed text-foreground/85">
+                          <span className={`mt-[0.6rem] h-1.5 w-1.5 shrink-0 rounded-full ${tone.bar}`} aria-hidden />
+                          {p}
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                )
+              })}
+            </ol>
+          </div>
+        </section>
+
+        {/* How it works */}
+        <section id="how" className="border-t border-border">
+          <div className={`${container} py-20 md:py-28`}>
+            <h2 className={h2}>{c.how.title}</h2>
+            <ol className="mt-12 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+              {c.how.steps.map((s, i) => (
+                <li key={s.title} className="border-t-2 border-foreground pt-5">
+                  <span className="text-sm font-semibold tabular-nums text-primary">{i + 1}</span>
+                  <h3 className="mt-2 text-xl font-bold tracking-tight">{s.title}</h3>
+                  <p className="mt-3 leading-relaxed text-muted-foreground">{s.text}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
+        {/* Features */}
+        <section id="features" className="border-t border-border bg-card">
+          <div className={`${container} py-20 md:py-28`}>
+            <h2 className={h2}>{c.features.title}</h2>
+            <p className={lead}>{c.features.lead}</p>
+
+            <div className="mt-12 divide-y divide-border border-y border-border">
+              {c.features.groups.map((g) => (
+                <div key={g.name} className="grid gap-4 py-7 md:grid-cols-[14rem_1fr] md:gap-10">
+                  <h3 className="text-base font-semibold text-muted-foreground">{g.name}</h3>
+                  <ul className="space-y-6">
+                    {g.items.map((f) => (
+                      <li key={f.name}>
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                          <span className="text-lg font-semibold tracking-tight">{f.name}</span>
+                          <span className={`rounded-full border px-2 py-0.5 text-xs font-medium ${audienceTone[f.audience]}`}>
+                            {c.features.audience[f.audience]}
+                          </span>
+                        </div>
+                        <p className="mt-1.5 max-w-[68ch] leading-relaxed text-muted-foreground">{f.text}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Skills Section */}
-        <section id="skills" className="px-6 lg:px-8 py-20 md:py-28">
-          <div className="max-w-7xl mx-auto">
-            <ScrollAnimation className="mb-12">
-              <h2 className="text-4xl md:text-5xl font-bold">{t('skillsTitle')}</h2>
-            </ScrollAnimation>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {/* Programming Languages */}
-              <ScrollAnimation animation="slide-up" delay={0}>
-                <div className="p-8 md:p-10 rounded-2xl border border-border dark:border-border/50 bg-card dark:bg-card/50 hover:bg-card/80 dark:hover:bg-card/70 transition-all duration-500">
-                  <h3 className="text-xl font-bold mb-6 text-primary dark:text-accent">{t('programmingLanguages')}</h3>
-                  <div className="space-y-3">
-                    {t('programmingSkills').map((skill) => (
-                      <div key={skill} className="p-3 md:p-4 rounded-lg bg-secondary/50 dark:bg-secondary/20 hover:bg-secondary dark:hover:bg-secondary/30 transition-all duration-300 group">
-                        <p className="font-medium group-hover:text-primary dark:group-hover:text-accent transition-colors duration-300">{skill}</p>
-                      </div>
+        {/* Impact */}
+        <section className="border-t border-border">
+          <div className={`${container} py-20 md:py-28`}>
+            <h2 className={h2}>{c.impact.title}</h2>
+            <div className="mt-12 grid gap-12 md:grid-cols-3 md:gap-10">
+              {c.impact.items.map((it) => (
+                <div key={it.title}>
+                  <h3 className="text-xl font-bold tracking-tight">{it.title}</h3>
+                  <p className="mt-3 leading-relaxed text-muted-foreground">{it.text}</p>
+                  <ul className="mt-5 space-y-2.5">
+                    {it.results.map((r) => (
+                      <li key={r} className="flex gap-2.5 leading-snug">
+                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-analysis" aria-hidden />
+                        {r}
+                      </li>
                     ))}
-                  </div>
+                  </ul>
                 </div>
-              </ScrollAnimation>
-
-              {/* AI & Machine Learning - Restructured */}
-              <ScrollAnimation animation="slide-up" delay={0.1} className="md:col-span-2 lg:col-span-1">
-                <div className="p-8 md:p-10 rounded-2xl border border-border dark:border-border/50 bg-card dark:bg-card/50 hover:bg-card/80 dark:hover:bg-card/70 transition-all duration-500">
-                  <h3 className="text-xl font-bold mb-6 text-primary dark:text-accent">{t('aiMachineLearning')}</h3>
-                  <div className="space-y-6">
-                    {/* Concepts */}
-                    <div>
-                      <h4 className="text-sm font-semibold text-foreground/80 mb-3 uppercase tracking-wide">Concepts</h4>
-                      <div className="space-y-2">
-                        {['Supervised Learning', 'Unsupervised Learning', 'Neural Networks'].map((skill) => (
-                          <div key={skill} className="p-3 rounded-lg bg-secondary/50 dark:bg-secondary/20 hover:bg-secondary dark:hover:bg-secondary/30 transition-all duration-300 group">
-                            <p className="text-sm font-medium group-hover:text-primary dark:group-hover:text-accent transition-colors duration-300">{skill}</p>
-                          </div>
-                        ))}
-                        <div className="p-3 rounded-lg bg-secondary/50 dark:bg-secondary/20 hover:bg-secondary dark:hover:bg-secondary/30 transition-all duration-300 group flex items-center justify-between">
-                          <p className="text-sm font-medium group-hover:text-primary dark:group-hover:text-accent transition-colors duration-300">Computer Vision</p>
-                          <span className="px-2 py-1 text-xs font-bold bg-amber-500/20 text-amber-600 dark:text-amber-400 rounded border border-amber-500/30">Learning</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Platforms & Libraries */}
-                    <div>
-                      <h4 className="text-sm font-semibold text-foreground/80 mb-3 uppercase tracking-wide">Platforms & Libraries</h4>
-                      <div className="space-y-2">
-                        {['Hugging Face (Transformers, Datasets)', 'Scikit-learn', 'Pandas', 'MatPlotLib', 'NumPy'].map((skill) => (
-                          <div key={skill} className="p-3 rounded-lg bg-secondary/50 dark:bg-secondary/20 hover:bg-secondary dark:hover:bg-secondary/30 transition-all duration-300 group">
-                            <p className="text-sm font-medium group-hover:text-primary dark:group-hover:text-accent transition-colors duration-300">{skill}</p>
-                          </div>
-                        ))}
-                        <div className="p-3 rounded-lg bg-secondary/50 dark:bg-secondary/20 hover:bg-secondary dark:hover:bg-secondary/30 transition-all duration-300 group flex items-center justify-between">
-                          <p className="text-sm font-medium group-hover:text-primary dark:group-hover:text-accent transition-colors duration-300">LangChain</p>
-                          <span className="px-2 py-1 text-xs font-bold bg-blue-500/20 text-blue-600 dark:text-blue-400 rounded border border-blue-500/30">Basic</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Frameworks */}
-                    <div>
-                      <h4 className="text-sm font-semibold text-foreground/80 mb-3 uppercase tracking-wide">Frameworks</h4>
-                      <div className="space-y-2">
-                        <div className="p-3 rounded-lg bg-secondary/50 dark:bg-secondary/20 hover:bg-secondary dark:hover:bg-secondary/30 transition-all duration-300 group flex items-center justify-between">
-                          <p className="text-sm font-medium group-hover:text-primary dark:group-hover:text-accent transition-colors duration-300">TensorFlow</p>
-                          <span className="px-2 py-1 text-xs font-bold bg-amber-500/20 text-amber-600 dark:text-amber-400 rounded border border-amber-500/30">Learning</span>
-                        </div>
-                        <div className="p-3 rounded-lg bg-secondary/50 dark:bg-secondary/20 hover:bg-secondary dark:hover:bg-secondary/30 transition-all duration-300 group flex items-center justify-between">
-                          <p className="text-sm font-medium group-hover:text-primary dark:group-hover:text-accent transition-colors duration-300">PyTorch</p>
-                          <span className="px-2 py-1 text-xs font-bold bg-blue-500/20 text-blue-600 dark:text-blue-400 rounded border border-blue-500/30">Basic</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </ScrollAnimation>
-
-              {/* Databases */}
-              <ScrollAnimation animation="slide-up" delay={0.2}>
-                <div className="p-8 md:p-10 rounded-2xl border border-border dark:border-border/50 bg-card dark:bg-card/50 hover:bg-card/80 dark:hover:bg-card/70 transition-all duration-500">
-                  <h3 className="text-xl font-bold mb-6 text-primary dark:text-accent">{t('databases')}</h3>
-                  <div className="space-y-3">
-                    {t('databaseSkills').map((skill) => (
-                      <div key={skill} className="p-3 md:p-4 rounded-lg bg-secondary/50 dark:bg-secondary/20 hover:bg-secondary dark:hover:bg-secondary/30 transition-all duration-300 group">
-                        <p className="font-medium group-hover:text-primary dark:group-hover:text-accent transition-colors duration-300">{skill}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </ScrollAnimation>
-
-              {/* Core CS */}
-              <ScrollAnimation animation="slide-up" delay={0.3}>
-                <div className="p-8 md:p-10 rounded-2xl border border-border dark:border-border/50 bg-card dark:bg-card/50 hover:bg-card/80 dark:hover:bg-card/70 transition-all duration-500">
-                  <h3 className="text-xl font-bold mb-6 text-primary dark:text-accent">{t('coreCS')}</h3>
-                  <div className="space-y-3">
-                    {t('coreSkills').map((skill) => (
-                      <div key={skill} className="p-3 md:p-4 rounded-lg bg-secondary/50 dark:bg-secondary/20 hover:bg-secondary dark:hover:bg-secondary/30 transition-all duration-300 group">
-                        <p className="font-medium group-hover:text-primary dark:group-hover:text-accent transition-colors duration-300">{skill}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </ScrollAnimation>
-
-              {/* Developer Tools */}
-              <ScrollAnimation animation="slide-up" delay={0.4}>
-                <div className="p-8 md:p-10 rounded-2xl border border-border dark:border-border/50 bg-card dark:bg-card/50 hover:bg-card/80 dark:hover:bg-card/70 transition-all duration-500">
-                  <h3 className="text-xl font-bold mb-6 text-primary dark:text-accent">{t('developerTools')}</h3>
-                  <div className="space-y-3">
-                    {t('toolsSkills').map((skill) => (
-                      <div key={skill} className="p-3 md:p-4 rounded-lg bg-secondary/50 dark:bg-secondary/20 hover:bg-secondary dark:hover:bg-secondary/30 transition-all duration-300 group">
-                        <p className="font-medium group-hover:text-primary dark:group-hover:text-accent transition-colors duration-300">{skill}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </ScrollAnimation>
-
-              {/* Languages */}
-              <ScrollAnimation animation="slide-up" delay={0.5}>
-                <div className="p-8 md:p-10 rounded-2xl border border-border dark:border-border/50 bg-card dark:bg-card/50 hover:bg-card/80 dark:hover:bg-card/70 transition-all duration-500">
-                  <h3 className="text-xl font-bold mb-6 text-primary dark:text-accent">{t('languages')}</h3>
-                  <div className="space-y-3">
-                    {t('languageSkills').map((skill) => (
-                      <div key={skill} className="p-3 md:p-4 rounded-lg bg-secondary/50 dark:bg-secondary/20 hover:bg-secondary dark:hover:bg-secondary/30 transition-all duration-300 group">
-                        <p className="font-medium group-hover:text-primary dark:group-hover:text-accent transition-colors duration-300">{skill}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </ScrollAnimation>
+              ))}
             </div>
           </div>
         </section>
 
-        {/* Contact Section */}
-        <section id="contact" className="px-6 lg:px-8 py-20 md:py-28 bg-secondary/20 dark:bg-secondary/10">
-          <div className="max-w-3xl mx-auto">
-            <ScrollAnimation className="mb-12 text-center">
-              <h2 className="text-4xl md:text-5xl font-bold mb-4">{t('contactTitle')}</h2>
-              <p className="text-lg text-muted-foreground">{t('contactSubtitle')}</p>
-            </ScrollAnimation>
+        {/* Compare + market */}
+        <section id="compare" className="border-t border-border bg-card">
+          <div className={`${container} py-20 md:py-28`}>
+            <h2 className={h2}>{c.compare.title}</h2>
+            <p className={lead}>{c.compare.lead}</p>
 
-            <ScrollAnimation animation="slide-up" delay={0.1}>
-              <form onSubmit={handleFormSubmit} className="space-y-6">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium mb-2">{t('name')}</label>
-                  <input
-                    type="text"
-                    id="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    placeholder={t('yourName')}
-                    className="w-full px-4 md:px-5 py-3 md:py-4 rounded-lg border border-border dark:border-border/50 bg-background dark:bg-background/50 focus:border-primary dark:focus:border-accent focus:outline-none transition-colors duration-300"
-                  />
+            {/* Mobile: one block per topic so the GDI column is never scrolled out of view */}
+            <dl className="mt-10 divide-y divide-border border-y border-border md:hidden">
+              {c.compare.rows.map(([topic, bi, gdi]) => (
+                <div key={topic} className="py-5">
+                  <dt className="font-semibold">{topic}</dt>
+                  <dd className="mt-2 grid grid-cols-[5.5rem_1fr] gap-x-3 gap-y-1.5 text-[0.95rem]">
+                    <span className="text-muted-foreground">{c.compare.colBiShort}</span>
+                    <span className="text-muted-foreground">{bi}</span>
+                    <span className="font-semibold text-primary">{c.compare.colGdi}</span>
+                    <span className="font-medium">{gdi}</span>
+                  </dd>
                 </div>
+              ))}
+            </dl>
 
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium mb-2">{t('email')}</label>
-                  <input
-                    type="email"
-                    id="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    placeholder={t('yourEmail')}
-                    className="w-full px-4 md:px-5 py-3 md:py-4 rounded-lg border border-border dark:border-border/50 bg-background dark:bg-background/50 focus:border-primary dark:focus:border-accent focus:outline-none transition-colors duration-300"
-                  />
-                </div>
+            <div className="mt-12 hidden md:block">
+              <table className="w-full border-collapse text-left">
+                <thead>
+                  <tr className="border-b-2 border-foreground">
+                    <th scope="col" className="w-[24%] py-3 pr-4 text-sm font-medium text-muted-foreground">
+                      {c.compare.colFeature}
+                    </th>
+                    <th scope="col" className="w-[38%] py-3 pr-4 text-sm font-medium text-muted-foreground">
+                      {c.compare.colBi}
+                    </th>
+                    <th scope="col" className="py-3 text-sm font-bold text-primary">
+                      {c.compare.colGdi}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {c.compare.rows.map(([topic, bi, gdi]) => (
+                    <tr key={topic} className="border-b border-border align-top">
+                      <th scope="row" className="py-4 pr-4 font-semibold">
+                        {topic}
+                      </th>
+                      <td className="py-4 pr-4 text-muted-foreground">{bi}</td>
+                      <td className="py-4 font-medium">{gdi}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium mb-2">{t('message')}</label>
-                  <textarea
-                    id="message"
-                    value={formData.message}
-                    onChange={handleInputChange}
-                    placeholder={t('tellAboutProject')}
-                    rows={6}
-                    className="w-full px-4 md:px-5 py-3 md:py-4 rounded-lg border border-border dark:border-border/50 bg-background dark:bg-background/50 focus:border-primary dark:focus:border-accent focus:outline-none transition-colors duration-300 resize-none"
-                  />
-                </div>
-
-                {submitStatus === 'error' && (
-                  <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 text-sm">
-                    Please fill in all fields
+            <div className="mt-16 max-w-3xl">
+              <h3 className="text-lg font-semibold">{c.compare.marketTitle}</h3>
+              <div className="mt-5 space-y-4">
+                {[
+                  { label: c.compare.marketLabel2025, value: c.compare.market2025, pct: 48, cls: 'bg-muted-foreground/40' },
+                  { label: c.compare.marketLabel2030, value: c.compare.market2030, pct: 100, cls: 'bg-primary' },
+                ].map((m) => (
+                  <div key={m.label} className="grid grid-cols-[6.5rem_1fr] items-center gap-4 sm:grid-cols-[8rem_1fr]">
+                    <span className="text-sm text-muted-foreground">{m.label}</span>
+                    <div className="flex items-center gap-3">
+                      <div className={`h-7 rounded-[4px] ${m.cls}`} style={{ width: `${m.pct * 0.72}%` }} aria-hidden />
+                      <span className="whitespace-nowrap font-semibold tabular-nums">{m.value}</span>
+                    </div>
                   </div>
-                )}
-                {submitStatus === 'success' && (
-                  <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/30 text-green-600 dark:text-green-400 text-sm flex items-center gap-2">
-                    <Check className="w-4 h-4" />
-                    Opening your email client...
-                  </div>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full px-8 py-4 bg-primary text-primary-foreground rounded-lg font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      {t('sendMessage')}
-                    </>
-                  ) : (
-                    t('sendMessage')
-                  )}
-                </button>
-              </form>
-            </ScrollAnimation>
-
-            <ScrollAnimation className="mt-12 pt-12 border-t border-border dark:border-border/50">
-              <p className="text-center text-muted-foreground mb-8">{t('connectSocial')}</p>
-              <div className="flex justify-center gap-6 flex-wrap">
-                <a href="https://github.com/inceilyas" target="_blank" rel="noopener noreferrer" className="p-4 rounded-lg bg-secondary dark:bg-secondary/30 hover:bg-secondary/80 dark:hover:bg-secondary/50 text-foreground hover:text-primary dark:hover:text-accent transition-all duration-300 hover:scale-110" title={t('githubLabel')}>
-                  <Github className="w-6 h-6" />
-                </a>
-                <a href="https://www.kaggle.com/mehmetlyasnce" target="_blank" rel="noopener noreferrer" className="p-4 rounded-lg bg-secondary dark:bg-secondary/30 hover:bg-secondary/80 dark:hover:bg-secondary/50 text-foreground hover:text-primary dark:hover:text-accent transition-all duration-300 hover:scale-110" title={t('kaggleLabel')}>
-                  <span className="w-6 h-6 flex items-center justify-center font-bold">K</span>
-                </a>
-                <a href="mailto:mehmetilyasince1@gmail.com" className="p-4 rounded-lg bg-secondary dark:bg-secondary/30 hover:bg-secondary/80 dark:hover:bg-secondary/50 text-foreground hover:text-primary dark:hover:text-accent transition-all duration-300 hover:scale-110" title={t('emailLabel')}>
-                  <Mail className="w-6 h-6" />
-                </a>
+                ))}
               </div>
-            </ScrollAnimation>
+              <a
+                href={site.marketSourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 inline-block text-sm text-muted-foreground underline decoration-border underline-offset-4 hover:text-foreground"
+              >
+                {c.compare.marketSource}
+              </a>
+            </div>
+          </div>
+        </section>
+
+        {/* Pricing model */}
+        <section className="border-t border-border">
+          <div className={`${container} py-20 md:py-28`}>
+            <h2 className={h2}>{c.model.title}</h2>
+            <p className={lead}>{c.model.lead}</p>
+            <div className="mt-12 grid gap-8 md:grid-cols-3">
+              {c.model.plans.map((p) => (
+                <div key={p.name} className="rounded-lg border border-border p-6">
+                  <h3 className="text-lg font-bold tracking-tight">{p.name}</h3>
+                  <p className="mt-2 leading-relaxed text-muted-foreground">{p.text}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Roadmap */}
+        <section id="roadmap" className="border-t border-border bg-card">
+          <div className={`${container} py-20 md:py-28`}>
+            <h2 className={h2}>{c.roadmap.title}</h2>
+            <ol className="relative mt-12 max-w-3xl">
+              {c.roadmap.items.map((r, i) => {
+                const last = i === c.roadmap.items.length - 1
+                const dot =
+                  r.status === 'done'
+                    ? 'border-analysis bg-analysis'
+                    : r.status === 'active'
+                      ? 'border-primary bg-card ring-4 ring-primary/15'
+                      : 'border-input bg-card'
+                const pill =
+                  r.status === 'done'
+                    ? 'bg-analysis-soft text-analysis'
+                    : r.status === 'active'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-secondary text-muted-foreground'
+                return (
+                  <li key={r.title} className="relative grid grid-cols-[1.5rem_1fr] gap-5 pb-10 last:pb-0">
+                    {!last && <span className="absolute bottom-0 left-[0.6875rem] top-6 w-0.5 bg-border" aria-hidden />}
+                    <span className={`relative mt-1 h-6 w-6 rounded-full border-2 ${dot}`} aria-hidden>
+                      {r.status === 'done' && <Check className="absolute inset-0 m-auto h-3.5 w-3.5 text-card" strokeWidth={3} />}
+                    </span>
+                    <div>
+                      <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ${pill}`}>
+                        {c.roadmap.status[r.status]}
+                      </span>
+                      <h3 className="mt-2 text-xl font-bold tracking-tight">{r.title}</h3>
+                      <p className="mt-2 max-w-[60ch] leading-relaxed text-muted-foreground">{r.text}</p>
+                    </div>
+                  </li>
+                )
+              })}
+            </ol>
+          </div>
+        </section>
+
+        {/* Team + contact */}
+        <section id="contact" className="border-t border-border">
+          <div className={`${container} grid gap-14 py-20 md:py-28 lg:grid-cols-2 lg:gap-16`}>
+            <div>
+              <h2 className={h2}>{c.contact.title}</h2>
+              <p className={lead}>{c.contact.lead}</p>
+              <div className="mt-12 border-t border-border pt-8">
+                <h3 className="text-lg font-semibold">{c.team.title}</h3>
+                <p className="mt-3 max-w-[56ch] leading-relaxed text-muted-foreground">{c.team.text}</p>
+              </div>
+              <p className="mt-8 text-sm text-muted-foreground">
+                {c.contact.direct}{' '}
+                <a href={`mailto:${site.email}`} className="font-medium text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground">
+                  {site.email}
+                </a>
+              </p>
+            </div>
+            <ContactForm />
           </div>
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="px-6 lg:px-8 py-12 border-t border-border dark:border-border/50 bg-secondary/20 dark:bg-secondary/10">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-8 mb-8">
-            <div>
-              <h3 className="font-bold text-lg bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-2">Mehmet İlyas İnce</h3>
-              <p className="text-sm text-muted-foreground">{t('footerDesc')}</p>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">{t('quickLinks')}</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#about" className="hover:text-primary dark:hover:text-accent transition-colors duration-300">{t('about')}</a></li>
-                <li><a href="#projects" className="hover:text-primary dark:hover:text-accent transition-colors duration-300">{t('projects')}</a></li>
-                <li><a href="#skills" className="hover:text-primary dark:hover:text-accent transition-colors duration-300">{t('skills')}</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">{t('social')}</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="https://github.com/inceilyas" target="_blank" rel="noopener noreferrer" className="hover:text-primary dark:hover:text-accent transition-colors duration-300">{t('github')}</a></li>
-                <li><a href="https://www.kaggle.com/mehmetlyasnce" target="_blank" rel="noopener noreferrer" className="hover:text-primary dark:hover:text-accent transition-colors duration-300">{t('kaggle')}</a></li>
-                <li><a href="mailto:mehmetilyasince1@gmail.com" className="hover:text-primary dark:hover:text-accent transition-colors duration-300">{t('email')}</a></li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="border-t border-border dark:border-border/50 pt-8">
-            <p className="text-center text-sm text-muted-foreground">{t('copyright')}</p>
-          </div>
+      <footer className="border-t border-border">
+        <div className={`${container} flex flex-col gap-3 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between`}>
+          <span className="flex items-center gap-2.5">
+            <LogoMark className="h-5 w-5" />
+            {site.fullName} ({site.name})
+          </span>
+          <span>
+            © {new Date().getFullYear()} {site.name}. {c.footer.rights}
+          </span>
         </div>
       </footer>
     </div>
+  )
+}
+
+function ContactForm() {
+  const { c } = useLanguage()
+  const f = c.contact
+  const [data, setData] = useState({ name: '', company: '', email: '', message: '' })
+  const [status, setStatus] = useState<'idle' | 'sent' | 'error'>('idle')
+
+  const field =
+    'mt-1.5 w-full rounded-md border border-input bg-card px-3.5 py-2.5 text-base text-foreground placeholder:text-muted-foreground/70 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20'
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    setData((d) => ({ ...d, [e.target.name]: e.target.value }))
+
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (!data.name.trim() || !data.email.trim() || !data.message.trim()) {
+      setStatus('error')
+      return
+    }
+    const body = [`${f.name}: ${data.name}`, `${f.company}: ${data.company}`, `${f.email}: ${data.email}`, '', data.message].join('\n')
+    window.location.href = `mailto:${site.email}?subject=${encodeURIComponent(f.mailSubject)}&body=${encodeURIComponent(body)}`
+    setStatus('sent')
+  }
+
+  return (
+    <form onSubmit={onSubmit} noValidate className="space-y-5 rounded-xl border border-border bg-card p-6 sm:p-8">
+      <div className="grid gap-5 sm:grid-cols-2">
+        <label className="block text-sm font-medium">
+          {f.name}
+          <input name="name" autoComplete="name" required value={data.name} onChange={onChange} className={field} />
+        </label>
+        <label className="block text-sm font-medium">
+          {f.company}
+          <input name="company" autoComplete="organization" value={data.company} onChange={onChange} className={field} />
+        </label>
+      </div>
+      <label className="block text-sm font-medium">
+        {f.email}
+        <input name="email" type="email" autoComplete="email" required value={data.email} onChange={onChange} className={field} />
+      </label>
+      <label className="block text-sm font-medium">
+        {f.message}
+        <textarea name="message" rows={5} required value={data.message} onChange={onChange} className={`${field} resize-y`} />
+      </label>
+      <button
+        type="submit"
+        className="w-full rounded-md bg-primary px-5 py-3 font-semibold text-primary-foreground transition-opacity hover:opacity-90 sm:w-auto"
+      >
+        {f.submit}
+      </button>
+      <p role="status" className={`text-sm ${status === 'error' ? 'text-destructive' : 'text-muted-foreground'}`}>
+        {status === 'sent' ? f.sent : status === 'error' ? f.required : ''}
+      </p>
+    </form>
   )
 }
