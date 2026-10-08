@@ -20,24 +20,25 @@ const mono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
-  title: content.tr.meta.title,
-  description: content.tr.meta.description,
+  title: content.en.meta.title,
+  description: content.en.meta.description,
   icons: {
     icon: '/icon.svg',
     apple: '/icon.svg',
   },
   openGraph: {
-    title: content.tr.meta.title,
-    description: content.tr.meta.description,
+    title: content.en.meta.title,
+    description: content.en.meta.description,
     url: site.url,
     siteName: site.fullName,
-    locale: 'tr_TR',
+    locale: 'en_US',
+    alternateLocale: ['tr_TR'],
     type: 'website',
   },
   twitter: {
     card: 'summary',
-    title: content.tr.meta.title,
-    description: content.tr.meta.description,
+    title: content.en.meta.title,
+    description: content.en.meta.description,
   },
 }
 
@@ -57,7 +58,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="tr" suppressHydrationWarning className={`${sans.variable} ${mono.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${sans.variable} ${mono.variable}`}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

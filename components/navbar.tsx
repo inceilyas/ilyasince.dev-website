@@ -43,7 +43,7 @@ export default function Navbar() {
 
   const LangSwitch = (
     <div className="flex items-center rounded-md border border-border p-0.5 text-sm" role="group" aria-label={c.nav.language}>
-      {(['tr', 'en'] as Language[]).map((lang) => (
+      {(['en', 'tr'] as Language[]).map((lang) => (
         <button
           key={lang}
           type="button"
@@ -87,7 +87,7 @@ export default function Navbar() {
         </ul>
 
         <div className="flex items-center gap-2">
-          <div className="hidden sm:block">{LangSwitch}</div>
+          {LangSwitch}
           <button
             type="button"
             onClick={toggleTheme}
@@ -130,8 +130,7 @@ export default function Navbar() {
               </li>
             ))}
           </ul>
-          <div className="mt-3 flex items-center justify-between gap-3">
-            {LangSwitch}
+          <div className="mt-3 flex items-center justify-end">
             <a
               href="#contact"
               onClick={() => setOpen(false)}
